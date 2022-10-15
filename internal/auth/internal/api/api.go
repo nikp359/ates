@@ -4,24 +4,28 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/nikp359/ates/internal/auth/internal/repository"
+	"github.com/nikp359/ates/internal/estream"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 type Server struct {
-	srv *echo.Echo
+	srv            *echo.Echo
+	userRepository *repository.UserRepository
+	producer       *estream.Producer
 }
 
-func NewServer() *Server {
-	e := echo.New()
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+func NewServer(userRepository *repository.UserRepository, producer *estream.Producer) *Server {
+	s := &Server{
+		userRepository: userRepository,
+		producer:       producer,
+	}
 
-	e.GET("/ping", func(c echo.Context) error {
-		return c.String(http.StatusOK, "pong")
-	})
+	s.srv = s.routers()
 
-	return &Server{srv: e}
+	return s
 }
 
 func (s *Server) Start() error {
@@ -30,4 +34,16 @@ func (s *Server) Start() error {
 
 func (s *Server) Stop(ctx context.Context) error {
 	return s.srv.Shutdown(ctx)
+}
+
+func (s *Server) routers() *echo.Echo {
+	e := echo.New()
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+
+	e.GET("/ping", func(c echo.Context) error {
+		return c.String(http.StatusOK, "pong")
+	})
+
+	return e
 }

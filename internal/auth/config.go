@@ -11,7 +11,8 @@ import (
 
 type (
 	Config struct {
-		DB ConfigDB `yaml:"db"`
+		DB    ConfigDB `yaml:"db"`
+		Kafka Kafka    `yaml:"kafka"`
 	}
 
 	ConfigDB struct {
@@ -19,6 +20,7 @@ type (
 	}
 
 	Kafka struct {
+		Addresses []string `yaml:"addresses"`
 	}
 )
 
