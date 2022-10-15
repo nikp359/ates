@@ -3,43 +3,58 @@ package auth
 import (
 	"context"
 	"errors"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
 
-	"github.com/nikp359/ates/internal/auth/internal/model"
-
-	"github.com/nikp359/ates/internal/api"
+	"github.com/Shopify/sarama"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/hashicorp/go-uuid"
+	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
 
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jmoiron/sqlx"
+	"github.com/nikp359/ates/internal/auth/internal/api"
+	"github.com/nikp359/ates/internal/auth/internal/model"
 	"github.com/nikp359/ates/internal/auth/internal/repository"
+	"github.com/nikp359/ates/internal/estream"
 )
 
 type App struct {
 	userRepository *repository.UserRepository
+	producer       sarama.SyncProducer
 }
 
-func NewApp(config *Config) *App {
-	return &App{
-		userRepository: repository.NewUserRepository(newDB(config.DB.Connection)),
+func NewApp(config *Config) (*App, error) {
+	db, err := newDB(config.DB.Connection)
+	if err != nil {
+		return nil, err
 	}
+
+	producer, err := estream.NewSyncProducer(estream.Config{
+		Addresses: []string{"localhost:29092"},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &App{
+		userRepository: repository.NewUserRepository(db),
+		producer:       producer,
+	}, nil
 }
 
-func newDB(dataSource string) *sqlx.DB {
+func newDB(dataSource string) (*sqlx.DB, error) {
 	db, err := sqlx.Connect("mysql", dataSource)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
 
 	db.SetMaxOpenConns(5)
 	db.SetMaxIdleConns(5)
 	db.SetConnMaxLifetime(5 * time.Minute)
 
-	return db
+	return db, nil
 }
 
 func (a *App) AddUser() {
@@ -54,7 +69,19 @@ func (a *App) AddUser() {
 	}
 }
 
-func Start() {
+func (a *App) SendMsg() {
+	uuidMsg, _ := uuid.GenerateUUID()
+
+	msg := &sarama.ProducerMessage{
+		Topic: "first_topic",
+		Value: sarama.StringEncoder("testing 123. UUID:" + uuidMsg)}
+
+	part, offset, err := a.producer.SendMessage(msg)
+
+	logrus.Infof("part: %v, offset: %v, error: %v", part, offset, err)
+}
+
+func (a *App) Start() {
 	srv := api.NewServer()
 
 	// Start server

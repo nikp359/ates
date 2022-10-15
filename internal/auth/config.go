@@ -17,6 +17,9 @@ type (
 	ConfigDB struct {
 		Connection string `yaml:"connection"`
 	}
+
+	Kafka struct {
+	}
 )
 
 func NewConfig(configPath string) (*Config, error) {

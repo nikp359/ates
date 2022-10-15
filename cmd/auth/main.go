@@ -15,9 +15,12 @@ func main() {
 		logrus.WithError(err).Fatal("parse config file")
 	}
 
-	app := auth.NewApp(config)
+	app, err := auth.NewApp(config)
+	if err != nil {
+		logrus.WithError(err).Fatal("init App")
+	}
 
-	app.AddUser()
+	app.Start()
 }
 
 func parseFlags() string {
