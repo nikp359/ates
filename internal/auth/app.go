@@ -8,9 +8,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/Shopify/sarama"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/hashicorp/go-uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
 
@@ -22,7 +20,7 @@ import (
 
 type App struct {
 	userRepository *repository.UserRepository
-	producer       sarama.SyncProducer
+	producer       *estream.Producer
 }
 
 func NewApp(config *Config) (*App, error) {
@@ -70,15 +68,12 @@ func (a *App) AddUser() {
 }
 
 func (a *App) SendMsg() {
-	uuidMsg, _ := uuid.GenerateUUID()
+	err := a.producer.SendSync(estream.UserCreated, &estream.UserEvent{
+		PublicID: "abc-123",
+		Email:    "",
+	})
 
-	msg := &sarama.ProducerMessage{
-		Topic: "first_topic",
-		Value: sarama.StringEncoder("testing 123. UUID:" + uuidMsg)}
-
-	part, offset, err := a.producer.SendMessage(msg)
-
-	logrus.Infof("part: %v, offset: %v, error: %v", part, offset, err)
+	logrus.Infof("error: %v", err)
 }
 
 func (a *App) Start() {

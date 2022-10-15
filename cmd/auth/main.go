@@ -20,7 +20,7 @@ func main() {
 		logrus.WithError(err).Fatal("init App")
 	}
 
-	app.Start()
+	app.SendMsg()
 }
 
 func parseFlags() string {
