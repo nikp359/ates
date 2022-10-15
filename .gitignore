@@ -1,3 +1,5 @@
 /cmd/at
 /.idea/
 /ates
+/resources/mysql
+config.yaml
