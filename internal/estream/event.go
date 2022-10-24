@@ -23,11 +23,15 @@ type (
 
 const (
 	UserCreated = "user.create"
+	UserUpdated = "user.updated"
+	UserDeleted = "user.deleted"
 )
 
 // Map events with topics
 var eventTopic = map[string]Topic{
-	UserCreated: TopicUser,
+	UserCreated: TopicUserStreaming,
+	UserUpdated: TopicUserStreaming,
+	UserDeleted: TopicUserStreaming,
 }
 
 // ErrUnsupportedEvent for undefined eventName
@@ -49,8 +53,19 @@ type producerEvent struct {
 	Payload json.Unmarshaler `json:"payload"`
 }
 
-//easyjson:json
-type UserEvent struct {
-	PublicID string `json:"public_id"`
-	Email    string `json:"email"`
-}
+// easyjson:json
+type (
+	EventUserCreated struct {
+		PublicID string `json:"public_id"`
+		Email    string `json:"email"`
+		Role     string `json:"role"`
+	}
+
+	EventUserUpdated struct {
+		Role string `json:"role"`
+	}
+
+	EventUserDeleted struct {
+		PublicID string `json:"public_id"`
+	}
+)

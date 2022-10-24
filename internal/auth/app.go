@@ -27,7 +27,7 @@ func NewApp(config *Config) (*App, error) {
 		return nil, err
 	}
 
-	producer, err := estream.NewSyncProducer(estream.Config{
+	producer, err := estream.NewAsyncProducer(estream.Config{
 		Addresses: config.Kafka.Addresses,
 	})
 	if err != nil {

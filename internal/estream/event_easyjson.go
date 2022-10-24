@@ -17,7 +17,139 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(in *jlexer.Lexer, out *UserEvent) {
+func easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(in *jlexer.Lexer, out *EventUserUpdated) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "role":
+			out.Role = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream(out *jwriter.Writer, in EventUserUpdated) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"role\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.Role))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v EventUserUpdated) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v EventUserUpdated) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *EventUserUpdated) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *EventUserUpdated) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(l, v)
+}
+func easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream1(in *jlexer.Lexer, out *EventUserDeleted) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "public_id":
+			out.PublicID = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream1(out *jwriter.Writer, in EventUserDeleted) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"public_id\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.PublicID))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v EventUserDeleted) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream1(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v EventUserDeleted) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream1(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *EventUserDeleted) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream1(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *EventUserDeleted) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream1(l, v)
+}
+func easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream2(in *jlexer.Lexer, out *EventUserCreated) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -40,6 +172,8 @@ func easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(in *jlexer.Lexer,
 			out.PublicID = string(in.String())
 		case "email":
 			out.Email = string(in.String())
+		case "role":
+			out.Role = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -50,7 +184,7 @@ func easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(in *jlexer.Lexer,
 		in.Consumed()
 	}
 }
-func easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream(out *jwriter.Writer, in UserEvent) {
+func easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream2(out *jwriter.Writer, in EventUserCreated) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -64,29 +198,34 @@ func easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream(out *jwriter.Writ
 		out.RawString(prefix)
 		out.String(string(in.Email))
 	}
+	{
+		const prefix string = ",\"role\":"
+		out.RawString(prefix)
+		out.String(string(in.Role))
+	}
 	out.RawByte('}')
 }
 
 // MarshalJSON supports json.Marshaler interface
-func (v UserEvent) MarshalJSON() ([]byte, error) {
+func (v EventUserCreated) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream(&w, v)
+	easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream2(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
-func (v UserEvent) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream(w, v)
+func (v EventUserCreated) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream2(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
-func (v *UserEvent) UnmarshalJSON(data []byte) error {
+func (v *EventUserCreated) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(&r, v)
+	easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream2(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *UserEvent) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(l, v)
+func (v *EventUserCreated) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream2(l, v)
 }

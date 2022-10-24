@@ -1,8 +1,8 @@
 package estream
 
 const (
-	// TopicUser users CUD topic
-	TopicUser Topic = "user"
+	TopicUserAuth      Topic = "user.auth"
+	TopicUserStreaming Topic = "user.streaming"
 )
 
 // Topic is kafka topic name
