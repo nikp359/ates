@@ -1,15 +1,16 @@
 CREATE DATABASE IF NOT EXISTS auth CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
-create table user
+create table if not exists user
 (
-    id        int auto_increment,
-    public_id varchar(255)                                     not null,
-    email     varchar(255)                                     not null,
-    role      enum ('admin', 'manager', 'user') default 'user' not null,
-    constraint user_pk
-        primary key (id),
-    constraint user_public_id
-        unique (public_id),
-    constraint user_email
-        unique (email)
+    id          int auto_increment primary key,
+    public_id   varchar(255)                                     not null,
+    email       varchar(255)                                     not null,
+    role        enum ('admin', 'manager', 'employee') default 'employee' not null,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    unique user_public_id (public_id),
+    unique user_email (email),
+    index user_updated_at (updated_at)
 );
+
+CREATE DATABASE IF NOT EXISTS task CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;

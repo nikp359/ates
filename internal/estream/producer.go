@@ -40,7 +40,7 @@ func NewSyncProducer(config Config) (*SyncProducer, error) {
 	}, nil
 }
 
-func (sp *SyncProducer) Send(eventName string, payload json.Unmarshaler) error {
+func (sp *SyncProducer) Send(eventName string, payload Payload) error {
 	msg, err := getMessage(eventName, payload)
 	if err != nil {
 		return err
@@ -73,7 +73,7 @@ func NewAsyncProducer(config Config) (*AsyncProducer, error) {
 	}, nil
 }
 
-func (ap *AsyncProducer) Send(eventName string, payload json.Unmarshaler) error {
+func (ap *AsyncProducer) Send(eventName string, payload Payload) error {
 	msg, err := getMessage(eventName, payload)
 	if err != nil {
 		return err
@@ -84,7 +84,7 @@ func (ap *AsyncProducer) Send(eventName string, payload json.Unmarshaler) error 
 	return nil
 }
 
-func getMessage(eventName string, payload json.Unmarshaler) (*sarama.ProducerMessage, error) {
+func getMessage(eventName string, payload Payload) (*sarama.ProducerMessage, error) {
 	t, ok := EventTopic(eventName)
 	if !ok {
 		return nil, ErrUnsupportedEvent
@@ -105,8 +105,10 @@ func getMessage(eventName string, payload json.Unmarshaler) (*sarama.ProducerMes
 	}
 
 	return &sarama.ProducerMessage{
-		Topic: t.String(),
-		Value: sarama.ByteEncoder(msgBody),
+		Topic:     t.String(),
+		Key:       sarama.StringEncoder(payload.PartitionKey()),
+		Timestamp: time.Now(),
+		Value:     sarama.ByteEncoder(msgBody),
 	}, nil
 }
 

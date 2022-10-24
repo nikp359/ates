@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/jmoiron/sqlx"
-	"github.com/nikp359/ates/internal/auth/internal/model"
+	"github.com/nikp359/ates/internal/task/internal/model"
 )
 
 type (

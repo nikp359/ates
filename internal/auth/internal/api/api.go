@@ -2,10 +2,8 @@ package api
 
 import (
 	"context"
-	"encoding/json"
-	"net/http"
-
 	"github.com/nikp359/ates/internal/auth/internal/model"
+	"net/http"
 
 	"github.com/hashicorp/go-uuid"
 
@@ -23,7 +21,7 @@ type Server struct {
 }
 
 type Producer interface {
-	Send(eventName string, payload json.Unmarshaler) error
+	Send(eventName string, payload estream.Payload) error
 }
 
 type BadRequest struct {
@@ -93,15 +91,21 @@ func (s *Server) createUser(c echo.Context) error {
 		return err
 	}
 
+	storeUser, err := s.userRepository.GetByPublicID(user.PublicID)
+	if err != nil {
+		return err
+	}
+
 	if err = s.producer.Send(estream.UserCreated, &estream.EventUserCreated{
-		PublicID: user.PublicID,
-		Email:    user.Email,
-		Role:     user.Role,
+		PublicID:  storeUser.PublicID,
+		Email:     storeUser.Email,
+		Role:      storeUser.Role,
+		Timestamp: storeUser.UpdatedAt,
 	}); err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusCreated, user)
+	return c.JSON(http.StatusCreated, storeUser)
 }
 
 func (s *Server) updateUser(c echo.Context) error {
@@ -111,17 +115,29 @@ func (s *Server) updateUser(c echo.Context) error {
 		return err
 	}
 
+	if user.PublicID == "" {
+		return c.JSON(http.StatusBadRequest, &BadRequest{Message: "public_id is empty"})
+	}
+
 	if err := s.userRepository.Update(&user); err != nil {
 		return err
 	}
 
-	if err := s.producer.Send(estream.UserUpdated, &estream.EventUserUpdated{
-		Role: user.Role,
+	storeUser, err := s.userRepository.GetByPublicID(user.PublicID)
+	if err != nil {
+		return err
+	}
+
+	if err = s.producer.Send(estream.UserUpdated, &estream.EventUserUpdated{
+		PublicID:  storeUser.PublicID,
+		Email:     storeUser.Email,
+		Role:      storeUser.Role,
+		Timestamp: storeUser.UpdatedAt,
 	}); err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, user)
+	return c.JSON(http.StatusOK, storeUser)
 }
 
 func (s *Server) deleteUser(c echo.Context) error {

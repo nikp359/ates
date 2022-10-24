@@ -3,6 +3,7 @@ package estream
 import (
 	"encoding/json"
 	"errors"
+	"time"
 )
 
 //go:generate easyjson
@@ -18,6 +19,7 @@ type (
 	// Payload interface must implement all events payload models
 	Payload interface {
 		UnmarshalJSON([]byte) error
+		PartitionKey() string
 	}
 )
 
@@ -56,16 +58,32 @@ type producerEvent struct {
 // easyjson:json
 type (
 	EventUserCreated struct {
-		PublicID string `json:"public_id"`
-		Email    string `json:"email"`
-		Role     string `json:"role"`
+		PublicID  string    `json:"public_id"`
+		Email     string    `json:"email"`
+		Role      string    `json:"role"`
+		Timestamp time.Time `json:"timestamp"`
 	}
 
 	EventUserUpdated struct {
-		Role string `json:"role"`
+		PublicID  string    `json:"public_id"`
+		Email     string    `json:"email"`
+		Role      string    `json:"role"`
+		Timestamp time.Time `json:"timestamp"`
 	}
 
 	EventUserDeleted struct {
 		PublicID string `json:"public_id"`
 	}
 )
+
+func (uc *EventUserCreated) PartitionKey() string {
+	return uc.PublicID
+}
+
+func (uc *EventUserUpdated) PartitionKey() string {
+	return uc.PublicID
+}
+
+func (uc *EventUserDeleted) PartitionKey() string {
+	return uc.PublicID
+}
