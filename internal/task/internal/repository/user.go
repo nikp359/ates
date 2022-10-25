@@ -12,13 +12,14 @@ type (
 )
 
 const (
-	insertUser = `INSERT INTO user (public_id, email, role) VALUES (:public_id, :email, :role);`
-
-	selectUsers = `SELECT public_id, email, role, created_at, updated_at FROM user;`
+	insertUser = `INSERT IGNORE INTO user (public_id, email, role, updated_at) VALUES (:public_id, :email, :role, :updated_at);`
 
 	selectUser = `SELECT public_id, email, role, created_at, updated_at FROM user WHERE public_id=?;`
 
-	updateUser = `UPDATE user set role=:role where public_id=:public_id;`
+	updateUser = `
+	INSERT IGNORE INTO user (public_id, email, role, updated_at)
+    	VALUES (:public_id, :email, :role, :updated_at)
+		ON DUPLICATE KEY UPDATE role=:role, updated_at=:updated_at;`
 
 	deleteUser = `DELETE FROM user where public_id=?;`
 )
@@ -27,15 +28,6 @@ func NewUserRepository(db *sqlx.DB) *UserRepository {
 	return &UserRepository{
 		db: db,
 	}
-}
-
-func (r *UserRepository) List() ([]model.User, error) {
-	users := make([]model.User, 0)
-	if err := r.db.Select(&users, selectUsers); err != nil {
-		return users, err
-	}
-
-	return users, nil
 }
 
 func (r *UserRepository) GetByPublicID(publicID string) (*model.User, error) {

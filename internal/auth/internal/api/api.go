@@ -101,7 +101,7 @@ func (s *Server) createUser(c echo.Context) error {
 		PublicID:  storeUser.PublicID,
 		Email:     storeUser.Email,
 		Role:      storeUser.Role,
-		Timestamp: storeUser.UpdatedAt,
+		UpdatedAt: storeUser.UpdatedAt,
 	}); err != nil {
 		return err
 	}
@@ -133,7 +133,7 @@ func (s *Server) updateUser(c echo.Context) error {
 		PublicID:  storeUser.PublicID,
 		Email:     storeUser.Email,
 		Role:      storeUser.Role,
-		Timestamp: storeUser.UpdatedAt,
+		UpdatedAt: storeUser.UpdatedAt,
 	}); err != nil {
 		return err
 	}

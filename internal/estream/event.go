@@ -66,14 +66,14 @@ type (
 		PublicID  string    `json:"public_id"`
 		Email     string    `json:"email"`
 		Role      string    `json:"role"`
-		Timestamp time.Time `json:"timestamp"`
+		UpdatedAt time.Time `json:"updated_at"`
 	}
 
 	UserUpdatedPayload struct {
 		PublicID  string    `json:"public_id"`
 		Email     string    `json:"email"`
 		Role      string    `json:"role"`
-		Timestamp time.Time `json:"timestamp"`
+		UpdatedAt time.Time `json:"updated_at"`
 	}
 
 	UserDeletedPayload struct {

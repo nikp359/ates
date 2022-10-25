@@ -42,9 +42,9 @@ func easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(in *jlexer.Lexer,
 			out.Email = string(in.String())
 		case "role":
 			out.Role = string(in.String())
-		case "timestamp":
+		case "updated_at":
 			if data := in.Raw(); in.Ok() {
-				in.AddError((out.Timestamp).UnmarshalJSON(data))
+				in.AddError((out.UpdatedAt).UnmarshalJSON(data))
 			}
 		default:
 			in.SkipRecursive()
@@ -76,9 +76,9 @@ func easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream(out *jwriter.Writ
 		out.String(string(in.Role))
 	}
 	{
-		const prefix string = ",\"timestamp\":"
+		const prefix string = ",\"updated_at\":"
 		out.RawString(prefix)
-		out.Raw((in.Timestamp).MarshalJSON())
+		out.Raw((in.UpdatedAt).MarshalJSON())
 	}
 	out.RawByte('}')
 }
@@ -197,9 +197,9 @@ func easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream2(in *jlexer.Lexer
 			out.Email = string(in.String())
 		case "role":
 			out.Role = string(in.String())
-		case "timestamp":
+		case "updated_at":
 			if data := in.Raw(); in.Ok() {
-				in.AddError((out.Timestamp).UnmarshalJSON(data))
+				in.AddError((out.UpdatedAt).UnmarshalJSON(data))
 			}
 		default:
 			in.SkipRecursive()
@@ -231,9 +231,9 @@ func easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream2(out *jwriter.Wri
 		out.String(string(in.Role))
 	}
 	{
-		const prefix string = ",\"timestamp\":"
+		const prefix string = ",\"updated_at\":"
 		out.RawString(prefix)
-		out.Raw((in.Timestamp).MarshalJSON())
+		out.Raw((in.UpdatedAt).MarshalJSON())
 	}
 	out.RawByte('}')
 }
