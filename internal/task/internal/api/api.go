@@ -34,7 +34,7 @@ func NewServer(producer Producer) *Server {
 }
 
 func (s *Server) Start() error {
-	return s.srv.Start(":8080")
+	return s.srv.Start(":8081") // TODO: move to config
 }
 
 func (s *Server) Stop(ctx context.Context) error {

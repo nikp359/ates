@@ -11,10 +11,6 @@ import (
 )
 
 type (
-	Config struct {
-		Addresses []string `yaml:"addresses"`
-	}
-
 	SyncProducer struct {
 		producer sarama.SyncProducer
 	}
@@ -29,6 +25,7 @@ func NewSyncProducer(config Config) (*SyncProducer, error) {
 	saramaCfg.Producer.RequiredAcks = sarama.WaitForAll // Wait for all in-sync replicas to ack the message
 	saramaCfg.Producer.Retry.Max = 10                   // Retry up to 10 times to produce the message
 	saramaCfg.Producer.Return.Successes = true
+	saramaCfg.ClientID = "estream"
 
 	producer, err := sarama.NewSyncProducer(config.Addresses, saramaCfg)
 	if err != nil {
@@ -56,6 +53,7 @@ func NewAsyncProducer(config Config) (*AsyncProducer, error) {
 	saramaCfg.Producer.RequiredAcks = sarama.WaitForLocal       // Only wait for the leader to ack
 	saramaCfg.Producer.Compression = sarama.CompressionSnappy   // Compress messages
 	saramaCfg.Producer.Flush.Frequency = 500 * time.Millisecond // Flush batches every 500ms
+	saramaCfg.ClientID = "estream"
 
 	producer, err := sarama.NewAsyncProducer(config.Addresses, saramaCfg)
 	if err != nil {

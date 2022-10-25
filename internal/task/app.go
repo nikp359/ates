@@ -1,4 +1,4 @@
-package auth
+package task
 
 import (
 	"context"
@@ -8,8 +8,8 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/nikp359/ates/internal/task/internal/consumer"
 	"github.com/nikp359/ates/internal/task/internal/repository"
+	"github.com/nikp359/ates/internal/task/internal/stream"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -29,12 +29,13 @@ func NewApp(config *Config) (*App, error) {
 		return nil, err
 	}
 
-	userConsumer := consumer.NewUserConsumer(repository.NewUserRepository(db))
+	userConsumer, err := stream.NewUserStream(repository.NewUserRepository(db), estream.Config(config.Kafka))
+	if err != nil {
+		return nil, err
+	}
 	userConsumer.Start()
 
-	producer, err := estream.NewAsyncProducer(estream.Config{
-		Addresses: config.Kafka.Addresses,
-	})
+	producer, err := estream.NewAsyncProducer(estream.Config(config.Kafka))
 	if err != nil {
 		return nil, err
 	}
