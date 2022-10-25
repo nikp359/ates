@@ -16,10 +16,15 @@ type (
 		UID       string `json:"uid"`
 	}
 
-	// Payload interface must implement all events payload models
 	Payload interface {
 		UnmarshalJSON([]byte) error
 		PartitionKey() string
+	}
+
+	RawMessageHandler func(Meta, json.RawMessage) error
+
+	EventHandler interface {
+		RawHandler() RawMessageHandler
 	}
 )
 
@@ -57,33 +62,33 @@ type producerEvent struct {
 
 // easyjson:json
 type (
-	EventUserCreated struct {
+	UserCreatedPayload struct {
 		PublicID  string    `json:"public_id"`
 		Email     string    `json:"email"`
 		Role      string    `json:"role"`
 		Timestamp time.Time `json:"timestamp"`
 	}
 
-	EventUserUpdated struct {
+	UserUpdatedPayload struct {
 		PublicID  string    `json:"public_id"`
 		Email     string    `json:"email"`
 		Role      string    `json:"role"`
 		Timestamp time.Time `json:"timestamp"`
 	}
 
-	EventUserDeleted struct {
+	UserDeletedPayload struct {
 		PublicID string `json:"public_id"`
 	}
 )
 
-func (uc *EventUserCreated) PartitionKey() string {
+func (uc *UserCreatedPayload) PartitionKey() string {
 	return uc.PublicID
 }
 
-func (uc *EventUserUpdated) PartitionKey() string {
+func (uc *UserUpdatedPayload) PartitionKey() string {
 	return uc.PublicID
 }
 
-func (uc *EventUserDeleted) PartitionKey() string {
+func (uc *UserDeletedPayload) PartitionKey() string {
 	return uc.PublicID
 }

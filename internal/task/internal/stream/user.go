@@ -3,6 +3,7 @@ package stream
 import (
 	"github.com/nikp359/ates/internal/estream"
 	"github.com/nikp359/ates/internal/task/internal/repository"
+	"github.com/sirupsen/logrus"
 )
 
 type (
@@ -18,12 +19,26 @@ func NewUserStream(userRepository *repository.UserRepository, consumerConfig est
 		return nil, err
 	}
 
-	return &UserStream{
+	us := &UserStream{
 		userRepository: userRepository,
 		consumer:       consumer,
-	}, nil
+	}
+
+	err = consumer.AddHandler(estream.UserCreated, estream.UserCreatedHandler(us.createUser))
+	if err != nil {
+		return nil, err
+	}
+
+	return us, nil
 }
 
 func (c *UserStream) Start() {
 	go c.consumer.Consume()
+}
+
+func (c *UserStream) createUser(meta estream.Meta, user estream.UserCreatedPayload) error {
+	logrus.Infof("Meta: %+v", meta)
+	logrus.Infof("Estream: %+v", user)
+
+	return nil
 }

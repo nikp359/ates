@@ -2,6 +2,8 @@ package estream
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/Shopify/sarama"
@@ -10,9 +12,9 @@ import (
 
 type (
 	ConsumerGroup struct {
-		client sarama.ConsumerGroup
-		topics []string
-		ready  chan struct{}
+		client   sarama.ConsumerGroup
+		topics   []string
+		handlers map[string]map[string][]RawMessageHandler
 	}
 )
 
@@ -30,9 +32,9 @@ func NewConsumerGroup(group string, config Config) (*ConsumerGroup, error) {
 	}
 
 	return &ConsumerGroup{
-		client: client,
-		ready:  make(chan struct{}),
-		topics: []string{TopicUserStreaming.String()},
+		client:   client,
+		topics:   make([]string, 0),
+		handlers: make(map[string]map[string][]RawMessageHandler),
 	}, nil
 }
 
@@ -48,8 +50,23 @@ func (g *ConsumerGroup) Close() error {
 	return g.client.Close()
 }
 
+// AddHandler add handler for event
+func (g *ConsumerGroup) AddHandler(eventName string, h EventHandler) error {
+	topic, ok := EventTopic(eventName)
+	if !ok {
+		return ErrUnsupportedEvent
+	}
+
+	if _, ok = g.handlers[topic.String()]; !ok {
+		g.handlers[topic.String()] = make(map[string][]RawMessageHandler)
+	}
+
+	g.handlers[topic.String()][eventName] = append(g.handlers[topic.String()][eventName], h.RawHandler())
+	g.topics = append(g.topics, topic.String())
+	return nil
+}
+
 func (g *ConsumerGroup) Setup(sarama.ConsumerGroupSession) error {
-	logrus.Infof("Setup sessions")
 	return nil
 }
 
@@ -60,11 +77,42 @@ func (g *ConsumerGroup) Cleanup(sarama.ConsumerGroupSession) error {
 
 // ConsumeClaim must start a consumer loop of ConsumerGroupClaim's Messages().
 func (g *ConsumerGroup) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	logrus.Infof("Start claim")
+	eventHandlers, ok := g.handlers[claim.Topic()]
+	if !ok {
+		return fmt.Errorf("missing handler for topic: %s", claim.Topic())
+	}
+
 	for {
 		select {
 		case message := <-claim.Messages():
-			logrus.Infof("Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
+			var event consumerEvent
+			err := json.Unmarshal(message.Value, &event)
+			if err != nil {
+				if len(message.Value) == 0 {
+					logrus.WithError(err).Errorf("Empty message error, msg: %+v", message)
+					continue
+				}
+				if !json.Valid(message.Value) {
+					logrus.WithError(err).Errorf("Validate json error, msg: %+v msg.Value: %s", message, string(message.Value))
+					continue
+				}
+
+				return fmt.Errorf("msg: %+v | value: %s | unmarshal estream event: %w", message, string(message.Value), err)
+			}
+
+			handlers, handlersFound := eventHandlers[event.EventName]
+			if !handlersFound {
+				session.MarkMessage(message, "")
+				continue
+			}
+
+			for _, h := range handlers {
+				err = h(event.Meta, event.Payload)
+				if err != nil {
+					logrus.WithError(err).Errorf("Handle message. Event: %s", event.EventName)
+					continue
+				}
+			}
 			session.MarkMessage(message, "")
 
 		case <-session.Context().Done():

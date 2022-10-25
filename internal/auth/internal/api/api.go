@@ -2,8 +2,9 @@ package api
 
 import (
 	"context"
-	"github.com/nikp359/ates/internal/auth/internal/model"
 	"net/http"
+
+	"github.com/nikp359/ates/internal/auth/internal/model"
 
 	"github.com/hashicorp/go-uuid"
 
@@ -96,7 +97,7 @@ func (s *Server) createUser(c echo.Context) error {
 		return err
 	}
 
-	if err = s.producer.Send(estream.UserCreated, &estream.EventUserCreated{
+	if err = s.producer.Send(estream.UserCreated, &estream.UserCreatedPayload{
 		PublicID:  storeUser.PublicID,
 		Email:     storeUser.Email,
 		Role:      storeUser.Role,
@@ -128,7 +129,7 @@ func (s *Server) updateUser(c echo.Context) error {
 		return err
 	}
 
-	if err = s.producer.Send(estream.UserUpdated, &estream.EventUserUpdated{
+	if err = s.producer.Send(estream.UserUpdated, &estream.UserUpdatedPayload{
 		PublicID:  storeUser.PublicID,
 		Email:     storeUser.Email,
 		Role:      storeUser.Role,
@@ -155,7 +156,7 @@ func (s *Server) deleteUser(c echo.Context) error {
 		return err
 	}
 
-	if err := s.producer.Send(estream.UserDeleted, &estream.EventUserDeleted{
+	if err := s.producer.Send(estream.UserDeleted, &estream.UserDeletedPayload{
 		PublicID: user.PublicID,
 	}); err != nil {
 		return err
