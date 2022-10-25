@@ -1,0 +1,2 @@
+db:
+  connection: "root:root@tcp(localhost:3306)/task"

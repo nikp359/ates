@@ -3,6 +3,7 @@ package estream
 import (
 	"encoding/json"
 	"errors"
+	"time"
 )
 
 //go:generate easyjson
@@ -15,19 +16,29 @@ type (
 		UID       string `json:"uid"`
 	}
 
-	// Payload interface must implement all events payload models
 	Payload interface {
 		UnmarshalJSON([]byte) error
+		PartitionKey() string
+	}
+
+	RawMessageHandler func(Meta, json.RawMessage) error
+
+	EventHandler interface {
+		RawHandler() RawMessageHandler
 	}
 )
 
 const (
 	UserCreated = "user.create"
+	UserUpdated = "user.updated"
+	UserDeleted = "user.deleted"
 )
 
 // Map events with topics
 var eventTopic = map[string]Topic{
-	UserCreated: TopicUser,
+	UserCreated: TopicUserStreaming,
+	UserUpdated: TopicUserStreaming,
+	UserDeleted: TopicUserStreaming,
 }
 
 // ErrUnsupportedEvent for undefined eventName
@@ -49,8 +60,35 @@ type producerEvent struct {
 	Payload json.Unmarshaler `json:"payload"`
 }
 
-//easyjson:json
-type UserEvent struct {
-	PublicID string `json:"public_id"`
-	Email    string `json:"email"`
+// easyjson:json
+type (
+	UserCreatedPayload struct {
+		PublicID  string    `json:"public_id"`
+		Email     string    `json:"email"`
+		Role      string    `json:"role"`
+		UpdatedAt time.Time `json:"updated_at"`
+	}
+
+	UserUpdatedPayload struct {
+		PublicID  string    `json:"public_id"`
+		Email     string    `json:"email"`
+		Role      string    `json:"role"`
+		UpdatedAt time.Time `json:"updated_at"`
+	}
+
+	UserDeletedPayload struct {
+		PublicID string `json:"public_id"`
+	}
+)
+
+func (uc *UserCreatedPayload) PartitionKey() string {
+	return uc.PublicID
+}
+
+func (uc *UserUpdatedPayload) PartitionKey() string {
+	return uc.PublicID
+}
+
+func (uc *UserDeletedPayload) PartitionKey() string {
+	return uc.PublicID
 }

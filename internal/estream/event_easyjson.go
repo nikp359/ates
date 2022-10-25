@@ -17,7 +17,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(in *jlexer.Lexer, out *UserEvent) {
+func easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(in *jlexer.Lexer, out *UserUpdatedPayload) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -40,6 +40,12 @@ func easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(in *jlexer.Lexer,
 			out.PublicID = string(in.String())
 		case "email":
 			out.Email = string(in.String())
+		case "role":
+			out.Role = string(in.String())
+		case "updated_at":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.UpdatedAt).UnmarshalJSON(data))
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -50,7 +56,7 @@ func easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(in *jlexer.Lexer,
 		in.Consumed()
 	}
 }
-func easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream(out *jwriter.Writer, in UserEvent) {
+func easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream(out *jwriter.Writer, in UserUpdatedPayload) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -64,29 +70,194 @@ func easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream(out *jwriter.Writ
 		out.RawString(prefix)
 		out.String(string(in.Email))
 	}
+	{
+		const prefix string = ",\"role\":"
+		out.RawString(prefix)
+		out.String(string(in.Role))
+	}
+	{
+		const prefix string = ",\"updated_at\":"
+		out.RawString(prefix)
+		out.Raw((in.UpdatedAt).MarshalJSON())
+	}
 	out.RawByte('}')
 }
 
 // MarshalJSON supports json.Marshaler interface
-func (v UserEvent) MarshalJSON() ([]byte, error) {
+func (v UserUpdatedPayload) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
 	easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
-func (v UserEvent) MarshalEasyJSON(w *jwriter.Writer) {
+func (v UserUpdatedPayload) MarshalEasyJSON(w *jwriter.Writer) {
 	easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
-func (v *UserEvent) UnmarshalJSON(data []byte) error {
+func (v *UserUpdatedPayload) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
 	easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *UserEvent) UnmarshalEasyJSON(l *jlexer.Lexer) {
+func (v *UserUpdatedPayload) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream(l, v)
+}
+func easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream1(in *jlexer.Lexer, out *UserDeletedPayload) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "public_id":
+			out.PublicID = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream1(out *jwriter.Writer, in UserDeletedPayload) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"public_id\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.PublicID))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v UserDeletedPayload) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream1(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v UserDeletedPayload) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream1(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *UserDeletedPayload) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream1(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *UserDeletedPayload) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream1(l, v)
+}
+func easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream2(in *jlexer.Lexer, out *UserCreatedPayload) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "public_id":
+			out.PublicID = string(in.String())
+		case "email":
+			out.Email = string(in.String())
+		case "role":
+			out.Role = string(in.String())
+		case "updated_at":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.UpdatedAt).UnmarshalJSON(data))
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream2(out *jwriter.Writer, in UserCreatedPayload) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"public_id\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.PublicID))
+	}
+	{
+		const prefix string = ",\"email\":"
+		out.RawString(prefix)
+		out.String(string(in.Email))
+	}
+	{
+		const prefix string = ",\"role\":"
+		out.RawString(prefix)
+		out.String(string(in.Role))
+	}
+	{
+		const prefix string = ",\"updated_at\":"
+		out.RawString(prefix)
+		out.Raw((in.UpdatedAt).MarshalJSON())
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v UserCreatedPayload) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream2(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v UserCreatedPayload) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonF642ad3eEncodeGithubComNikp359AtesInternalEstream2(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *UserCreatedPayload) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream2(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *UserCreatedPayload) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonF642ad3eDecodeGithubComNikp359AtesInternalEstream2(l, v)
 }

@@ -1,5 +1,7 @@
 /cmd/at
 /.idea/
 /ates
+/auth
+/task
 /resources/mysql
 config.yaml
