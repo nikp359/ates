@@ -82,6 +82,10 @@ func (ap *AsyncProducer) Send(eventName string, payload Payload) error {
 	return nil
 }
 
+func (ap *AsyncProducer) Close() error {
+	return ap.producer.Close()
+}
+
 func getMessage(eventName string, payload Payload) (*sarama.ProducerMessage, error) {
 	t, ok := EventTopic(eventName)
 	if !ok {

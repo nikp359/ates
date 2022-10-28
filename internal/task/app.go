@@ -41,7 +41,7 @@ func NewApp(config *Config) (*App, error) {
 	}
 
 	return &App{
-		server: api.NewServer(producer),
+		server: api.NewServer(repository.NewTaskRepository(db), producer),
 	}, nil
 }
 

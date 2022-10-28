@@ -5,12 +5,6 @@ import (
 	"github.com/nikp359/ates/internal/task/internal/model"
 )
 
-type (
-	UserRepository struct {
-		db *sqlx.DB
-	}
-)
-
 const (
 	insertUser = `INSERT IGNORE INTO user (public_id, email, role, updated_at) VALUES (:public_id, :email, :role, :updated_at);`
 
@@ -22,6 +16,12 @@ const (
 		ON DUPLICATE KEY UPDATE role=:role, updated_at=:updated_at;`
 
 	deleteUser = `DELETE FROM user where public_id=?;`
+)
+
+type (
+	UserRepository struct {
+		db *sqlx.DB
+	}
 )
 
 func NewUserRepository(db *sqlx.DB) *UserRepository {
