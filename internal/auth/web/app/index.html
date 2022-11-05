@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Auth login page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+        }
+    }
+    </script>
+</head>
+<body>
+<nav class="navbar is-info" role="navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <img src="key.svg" width="36" height="36">
+        </a>
+
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div class="navbar-menu" id="navMenu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="/app">
+                List
+            </a>
+
+            <a class="navbar-item">
+                Create
+            </a>
+        </div>
+
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <div class="buttons">
+                    <a class="button is-primary">
+                        <strong>Logout</strong>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<section class="section" id="app">
+    <h1 class="title">Users</h1>
+    <h2 class="title">{{ message }}</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Public ID</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Created at</th>
+            <th>Updated at</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+            <th>Public ID</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Created at</th>
+            <th>Updated at</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+        </tfoot>
+        <tbody>
+        <tr v-for="user in users">
+            <th>{{ user.public_id }}</th>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.created_at }}</td>
+            <td>{{ user.updated_at }}</td>
+            <td><a :href="`edit.html#${user.public_id}`"><ion-icon name="create-outline"></ion-icon></a></td>
+            <td><ion-icon name="trash-outline" @click="deleteUser(user.public_id)"></ion-icon></td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="js/navbar.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

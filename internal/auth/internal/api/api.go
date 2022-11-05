@@ -56,8 +56,10 @@ func (s *Server) routers() *echo.Echo {
 		return c.String(http.StatusOK, "pong")
 	})
 
-	api := e.Group("/api")
+	e.Static("/login", "internal/auth/web/login")
+	e.Static("/app", "internal/auth/web/app")
 
+	api := e.Group("/api")
 	api.GET("/users", s.userList)
 	api.POST("/users", s.createUser)
 	api.PUT("/users", s.updateUser)
